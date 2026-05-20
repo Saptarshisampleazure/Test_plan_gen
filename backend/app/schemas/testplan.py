@@ -1,0 +1,51 @@
+from typing import Any
+
+from pydantic import BaseModel, Field
+
+
+class UploadedFileReference(BaseModel):
+    fileId: str | None = None
+    fileName: str | None = None
+    name: str | None = None
+
+
+class GenerateTestPlanRequest(BaseModel):
+    files: list[UploadedFileReference] = Field(default_factory=list)
+
+
+class TestCase(BaseModel):
+    id: str
+    title: str
+    priority: str
+    expected: str
+
+
+class TestPlanSections(BaseModel):
+    scope: str
+    objectives: list[str]
+    featuresToTest: list[str]
+    featuresNotToTest: list[str]
+    testStrategy: str
+    functionalTesting: list[str]
+    nonFunctionalTesting: list[str]
+    securityTesting: list[str]
+    apiTesting: list[str]
+    uiTesting: list[str]
+    regressionTesting: list[str]
+    risks: list[str]
+    deliverables: list[str]
+    testCases: list[TestCase]
+
+
+class GenerateTestPlanResponse(BaseModel):
+    id: str
+    createdAt: str
+    sourceFiles: list[str]
+    sections: TestPlanSections
+
+
+class ExportPayload(BaseModel):
+    root: dict[str, Any]
+
+    model_config = {"arbitrary_types_allowed": True}
+# 
