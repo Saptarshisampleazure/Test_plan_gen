@@ -172,5 +172,5 @@ def generate_plan(document_text: str, source_files: list[str]) -> dict:
              #   "Focus areas include functional workflows, security controls, API contracts, and UI responsiveness.",
               #  "Execution should follow the prioritized test case sequence with risk-based testing approach.",
             #],
-        },
+        }, 
     }
