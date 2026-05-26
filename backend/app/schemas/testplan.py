@@ -42,6 +42,9 @@ class GenerateTestPlanResponse(BaseModel):
     createdAt: str
     sourceFiles: list[str]
     sections: TestPlanSections
+    confidence_score: int
+    confidence_level: str
+    reason: str
 
 
 class ExportPayload(BaseModel):

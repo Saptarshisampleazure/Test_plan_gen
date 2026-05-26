@@ -46,7 +46,7 @@ def on_startup() -> None:
 
 @app.get("/health", tags=["System"])
 def health() -> dict:
-    return {"status": "ok", "service": settings.app_name, "environment": settings.app_env}
+    return {"status": "ok", "service": "Test Plan Generator", "environment": "development"}
 
 
 app.include_router(auth.router)

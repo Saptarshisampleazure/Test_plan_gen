@@ -23,6 +23,9 @@ class Settings(BaseSettings):
     default_username: str = "admin"
     default_password: str = "admin123"
     max_upload_size_mb: int = 25
+    ollama_generate_url: str = "http://localhost:11434/api/generate"
+    ollama_model: str = "qwen2.5vl:7b"
+    ollama_timeout_seconds: int = 120
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",

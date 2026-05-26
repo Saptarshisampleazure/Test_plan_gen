@@ -460,7 +460,7 @@ function TestPlanPreview({ testPlan }) {
   return (
     <article className="document-preview">
       <header>
-        <h3>AI Generated Software Test Plan</h3>
+        <h3>Software Test Plan</h3>
         <p>
           {testPlan.sourceFiles?.join(', ') || 'Uploaded document'} -{' '}
           {formatDate(testPlan.createdAt)}
