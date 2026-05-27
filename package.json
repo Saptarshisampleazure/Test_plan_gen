@@ -6,9 +6,9 @@
   "scripts": {
     "dev:backend": "cd backend && .venv\\Scripts\\python.exe -m uvicorn app.main:app --reload --reload-dir app --host 127.0.0.1 --port 8000",
     "dev:frontend": "vite",
-    "dev:full": "powershell -ExecutionPolicy Bypass -File scripts\\start-dev.ps1",
-    "dev": "powershell -ExecutionPolicy Bypass -File scripts\\start-app.ps1",
-    "start": "powershell -ExecutionPolicy Bypass -File scripts\\start-app.ps1",
+    "dev:full": "node scripts/start-dev.cjs",
+    "dev": "node scripts/start-app.cjs",
+    "start": "node scripts/start-app.cjs",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"

@@ -264,5 +264,26 @@
     "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "size": 1983599,
     "path": "C:\\Audio_Embassy\\POC\\Test_plan_gen\\backend\\storage\\uploads\\7a75e2d5-b6c4-41da-816b-510c3a4595ba_Actuall_example.docx"
+  },
+  "4a91aaf3-2057-4e87-b431-b7e5143a14a7": {
+    "fileId": "4a91aaf3-2057-4e87-b431-b7e5143a14a7",
+    "fileName": "realistic_complete_srs_input.docx",
+    "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "size": 38996,
+    "path": "/media/einfochips/DISK4/Test_plan_gen/backend/storage/uploads/4a91aaf3-2057-4e87-b431-b7e5143a14a7_realistic_complete_srs_input.docx"
+  },
+  "460da881-1e1b-46ea-8e6c-d1f74dcdbbe4": {
+    "fileId": "460da881-1e1b-46ea-8e6c-d1f74dcdbbe4",
+    "fileName": "realistic_complete_srs_input.docx",
+    "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "size": 38996,
+    "path": "/media/einfochips/DISK4/Test_plan_gen/backend/storage/uploads/460da881-1e1b-46ea-8e6c-d1f74dcdbbe4_realistic_complete_srs_input.docx"
+  },
+  "f38b5281-79a2-4813-ba6f-b108f6c16681": {
+    "fileId": "f38b5281-79a2-4813-ba6f-b108f6c16681",
+    "fileName": "Actuall_example.docx",
+    "contentType": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+    "size": 1983599,
+    "path": "/media/einfochips/DISK4/Test_plan_gen/backend/storage/uploads/f38b5281-79a2-4813-ba6f-b108f6c16681_Actuall_example.docx"
   }
 }

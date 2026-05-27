@@ -349,7 +349,7 @@ function App() {
                 hidden
               />
               <div className="upload-mark">+</div>
-              <h2>Drop your document here</h2>
+              <h2>Drop or attach your document here</h2>
               <p>PDF/DOCX</p>
             </div>
 
