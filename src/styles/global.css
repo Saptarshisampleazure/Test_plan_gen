@@ -416,6 +416,21 @@ button:disabled {
   margin: 0;
 }
 
+.testcase-detail {
+  grid-column: 1 / -1;
+}
+
+.testcase-detail b,
+.testcase-row b {
+  color: #172033;
+}
+
+.testcase-detail ul,
+.testcase-detail ol {
+  margin: 6px 0 0;
+  padding-left: 22px;
+}
+
 @media (max-width: 900px) {
   .app-shell {
     padding: 18px;

@@ -15,8 +15,14 @@ class GenerateTestPlanRequest(BaseModel):
 
 class TestCase(BaseModel):
     id: str
+    requirementIds: list[str] = Field(default_factory=list)
+    category: str | None = None
+    testType: str | None = None
     title: str
     priority: str
+    preconditions: list[str] = Field(default_factory=list)
+    testData: list[str] = Field(default_factory=list)
+    steps: list[str] = Field(default_factory=list)
     expected: str
 
 
@@ -32,6 +38,11 @@ class TestPlanSections(BaseModel):
     apiTesting: list[str]
     uiTesting: list[str]
     regressionTesting: list[str]
+    requirementsTraceability: list[str] = Field(default_factory=list)
+    testEnvironment: list[str] = Field(default_factory=list)
+    entryCriteria: list[str] = Field(default_factory=list)
+    exitCriteria: list[str] = Field(default_factory=list)
+    assumptions: list[str] = Field(default_factory=list)
     risks: list[str]
     deliverables: list[str]
     testCases: list[TestCase]

@@ -1,10 +1,26 @@
 const { spawn, spawnSync } = require('child_process');
 const { join } = require('path');
 const fs = require('fs');
+const http = require('http');
 
 const root = join(__dirname, '..');
 const backend = join(root, 'backend');
 const isWin = process.platform === 'win32';
+
+function testBackendHealth() {
+  return new Promise((resolve) => {
+    const request = http.get('http://127.0.0.1:8000/health', { timeout: 3000 }, (response) => {
+      response.resume();
+      resolve(response.statusCode === 200);
+    });
+
+    request.on('timeout', () => {
+      request.destroy();
+      resolve(false);
+    });
+    request.on('error', () => resolve(false));
+  });
+}
 
 if (isWin) {
   const ps = join(__dirname, 'start-app.ps1');
@@ -24,10 +40,17 @@ if (isWin) {
   console.log('Starting Python backend with the built frontend mounted.');
   console.log('Open: http://127.0.0.1:8000/');
 
-  const proc = spawn(venvPy, ['-m', 'uvicorn', 'app.main:app', '--reload', '--reload-dir', 'app', '--host', '127.0.0.1', '--port', '8000'], {
-    cwd: backend,
-    stdio: 'inherit',
-  });
+  testBackendHealth().then((isHealthy) => {
+    if (isHealthy) {
+      console.log('Python backend is already running at http://127.0.0.1:8000/');
+      return;
+    }
 
-  proc.on('close', (code) => process.exit(code));
+    const proc = spawn(venvPy, ['-m', 'uvicorn', 'app.main:app', '--reload', '--reload-dir', 'app', '--host', '127.0.0.1', '--port', '8000'], {
+      cwd: backend,
+      stdio: 'inherit',
+    });
+
+    proc.on('close', (code) => process.exit(code));
+  });
 }

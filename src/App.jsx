@@ -20,10 +20,14 @@ const sectionTitles = {
   apiTesting: 'API Testing',
   uiTesting: 'UI Testing',
   regressionTesting: 'Regression Testing',
+  requirementsTraceability: 'Requirements Traceability',
+  testEnvironment: 'Test Environment',
+  entryCriteria: 'Entry Criteria',
+  exitCriteria: 'Exit Criteria',
+  assumptions: 'Assumptions',
   risks: 'Risks',
   deliverables: 'Deliverables',
   testCases: 'Test Cases',
-  Summary : 'Summary',
 }
 
 const acceptedExtensions = ['pdf', 'docx', 'txt']
@@ -59,10 +63,16 @@ function App() {
   const [isExporting, setIsExporting] = useState('')
   const [backendAlert, setBackendAlert] = useState(null)
   const [backendUrl, setBackendUrl] = useState(API_BASE_URL)
+  const backendUrlRef = useRef(API_BASE_URL)
   const abortRef = useRef(null)
   const inputRef = useRef(null)
 
   const canSubmit = useMemo(() => Boolean(file) && !isWorking, [file, isWorking])
+
+  const setActiveBackendUrl = useCallback((url) => {
+    backendUrlRef.current = url
+    setBackendUrl(url)
+  }, [])
 
   const clearDocument = useCallback(() => {
     abortRef.current?.abort()
@@ -82,9 +92,9 @@ function App() {
   const showBackendAlert = useCallback((details = '') => {
     setBackendAlert({
       title: 'Python backend is not responding',
-      message: `Start or restart the Python backend at ${getBackendLabel(backendUrl)}, then try again.${details ? ` (${details})` : ''}`,
+      message: `Start or restart the Python backend at ${getBackendLabel(backendUrlRef.current)}, then try again.${details ? ` (${details})` : ''}`,
     })
-  }, [backendUrl])
+  }, [])
 
   const checkBackend = useCallback(async () => {
     const urlsToTry = getUrlsToTry(backendUrl)
@@ -103,7 +113,7 @@ function App() {
 
           if (response.ok) {
             if (url !== backendUrl) {
-              setBackendUrl(url)
+              setActiveBackendUrl(url)
             }
             setBackendAlert(null)
             return true
@@ -118,7 +128,7 @@ function App() {
 
     showBackendAlert(lastError?.message ?? 'Failed to fetch')
     return false
-  }, [backendUrl, showBackendAlert])
+  }, [backendUrl, setActiveBackendUrl, showBackendAlert])
 
   useEffect(() => {
     clearDocument()
@@ -141,7 +151,7 @@ function App() {
       headers.set('Authorization', `Bearer ${token}`)
     }
 
-    const response = await fetch(`${backendUrl}${path}`, {
+    const response = await fetch(`${backendUrlRef.current}${path}`, {
       ...options,
       headers,
       signal: abortRef.current?.signal,
@@ -159,7 +169,7 @@ function App() {
     const existingToken = localStorage.getItem(TOKEN_KEY)
     if (existingToken) return existingToken
 
-    const response = await fetch(`${backendUrl}/login`, {
+    const response = await fetch(`${backendUrlRef.current}/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -494,7 +504,16 @@ function SectionContent({ value }) {
               <strong>{item.id}</strong>
               <span>{item.title}</span>
               <em>{item.priority}</em>
-              <p>{item.expected}</p>
+              {item.requirementIds?.length ? (
+                <p><b>Requirements:</b> {item.requirementIds.join(', ')}</p>
+              ) : null}
+              {item.category || item.testType ? (
+                <p><b>Category:</b> {[item.category, item.testType].filter(Boolean).join(' - ')}</p>
+              ) : null}
+              <DetailList label="Preconditions" items={item.preconditions} />
+              <DetailList label="Test Data" items={item.testData} />
+              <DetailList label="Steps" items={item.steps} ordered />
+              <p><b>Expected:</b> {item.expected}</p>
             </div>
           ))}
         </div>
@@ -511,6 +530,23 @@ function SectionContent({ value }) {
   }
 
   return <p>{value}</p>
+}
+
+function DetailList({ label, items, ordered = false }) {
+  if (!items?.length) return null
+
+  const ListTag = ordered ? 'ol' : 'ul'
+
+  return (
+    <div className="testcase-detail">
+      <b>{label}</b>
+      <ListTag>
+        {items.map((item) => (
+          <li key={item}>{item}</li>
+        ))}
+      </ListTag>
+    </div>
+  )
 }
 
 async function readError(response, fallback) {

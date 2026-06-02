@@ -1,7 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
-from pydantic import Field
+from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -23,14 +23,40 @@ class Settings(BaseSettings):
     default_username: str = "admin"
     default_password: str = "admin123"
     max_upload_size_mb: int = 25
-    ollama_generate_url: str = "http://localhost:11434/api/generate"
-    ollama_model: str = "qwen2.5:7b"
-    ollama_timeout_seconds: int = 120
+    testplan_generator_provider: str = Field(
+        default="ollama",
+        validation_alias=AliasChoices("TESTPLAN_GENERATOR_PROVIDER", "TESTPLAN_MODEL_PROVIDER"),
+    )
+    ollama_generate_url: str = Field(default="http://localhost:11434/api/generate")
+    ollama_model: str = Field(
+        default="qwen2.5:3b",
+        validation_alias=AliasChoices("LOCAL_AI_SRS_VISION_MODEL_2", "OLLAMA_MODEL"),
+    )
+    ollama_keep_alive: str = Field(default="10m")
+    ollama_num_gpu: int = Field(default=-1)
+    ollama_main_gpu: int = Field(default=0)
+    ollama_num_ctx: int = Field(default=8192)
+    ollama_num_predict: int | None = Field(default=None)
+    ollama_temperature: float = Field(default=0.2)
+    colab_srs_base_url: str = Field(default="")
+    colab_srs_generate_path: str = Field(default="/generate-srs")
+    colab_srs_api_key: str = Field(
+        default="",
+        validation_alias=AliasChoices("COLAB_SRS_API_KEY", "SRS_API_KEY"),
+    )
+    colab_srs_model: str = Field(default="qwen2.5:7b")
+    colab_srs_temperature: float = Field(default=0.2)
+    colab_srs_num_predict: int | None = Field(default=2500)
+    colab_srs_num_ctx: int | None = Field(default=8192)
+    colab_srs_format: str = Field(default="json")
+    colab_srs_timeout_seconds: int | None = Field(default=600)
+    max_prompt_document_chars: int = Field(default=24000)
 
     model_config = SettingsConfigDict(
         env_file=BASE_DIR / ".env",
         env_file_encoding="utf-8",
         extra="ignore",
+        populate_by_name=True,
     )
 
     @property
