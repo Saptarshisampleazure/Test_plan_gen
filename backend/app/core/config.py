@@ -23,23 +23,10 @@ class Settings(BaseSettings):
     default_username: str = "admin"
     default_password: str = "admin123"
     max_upload_size_mb: int = 25
-    testplan_generator_provider: str = Field(
-        default="ollama",
-        validation_alias=AliasChoices("TESTPLAN_GENERATOR_PROVIDER", "TESTPLAN_MODEL_PROVIDER"),
-    )
-    ollama_generate_url: str = Field(default="http://localhost:11434/api/generate")
-    ollama_model: str = Field(
-        default="qwen2.5:3b",
-        validation_alias=AliasChoices("LOCAL_AI_SRS_VISION_MODEL_2", "OLLAMA_MODEL"),
-    )
-    ollama_keep_alive: str = Field(default="10m")
-    ollama_num_gpu: int = Field(default=-1)
-    ollama_main_gpu: int = Field(default=0)
-    ollama_num_ctx: int = Field(default=8192)
-    ollama_num_predict: int | None = Field(default=None)
-    ollama_temperature: float = Field(default=0.2)
     colab_srs_base_url: str = Field(default="")
     colab_srs_generate_path: str = Field(default="/generate-srs")
+    colab_srs_fallback_paths: str = Field(default="/generate-srs,/generate,/api/generate,/")
+    colab_srs_local_fallback: bool = Field(default=True)
     colab_srs_api_key: str = Field(
         default="",
         validation_alias=AliasChoices("COLAB_SRS_API_KEY", "SRS_API_KEY"),

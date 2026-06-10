@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 
 from fastapi import FastAPI
@@ -8,6 +9,7 @@ from fastapi.staticfiles import StaticFiles
 from app.api import auth, export, testplan, upload
 from app.core.config import get_settings
 from app.services.file_storage import ensure_storage
+from app.services.testplan_generator import _colab_generate_urls
 
 
 settings = get_settings()
@@ -45,6 +47,10 @@ app.add_middleware(
 @app.on_event("startup")
 def on_startup() -> None:
     ensure_storage()
+    # Log resolved Colab SRS URLs to help debug upstream 404s (do not log API keys)
+    if settings.colab_srs_base_url.strip():
+        resolved = ", ".join(_colab_generate_urls(settings))
+        logging.getLogger("uvicorn.access").info(f"Resolved Colab SRS URLs: {resolved}")
 
 
 @app.get("/health", tags=["System"])

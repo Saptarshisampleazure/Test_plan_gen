@@ -7,11 +7,16 @@ from docx import Document
 from docx.document import Document as DocxDocument
 from docx.oxml.table import CT_Tbl
 from docx.oxml.text.paragraph import CT_P
+from docx.oxml.ns import qn
+from docx.shared import RGBColor
 from docx.table import Table
 from docx.text.paragraph import Paragraph as DocxParagraph
+from reportlab.lib.colors import black
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import Paragraph as PdfParagraph
 from reportlab.platypus import SimpleDocTemplate, Spacer
 
@@ -40,6 +45,15 @@ SECTION_TITLES = {
 
 PROJECT_ROOT = Path(__file__).resolve().parents[3]
 TEST_PLAN_TEMPLATE_PATH = PROJECT_ROOT / "ei_SW_TMP_TestPlan_GNRL.docx"
+CONTENT_FONT_NAME = "Arial"
+CONTENT_FONT_COLOR = RGBColor(0, 0, 0)
+PDF_CONTENT_FONT_NAME = "Arial"
+PDF_FONT_CANDIDATES = (
+    Path("/usr/share/fonts/truetype/msttcorefonts/Arial.ttf"),
+    Path("/usr/share/fonts/truetype/msttcorefonts/arial.ttf"),
+    Path("/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"),
+    Path("/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf"),
+)
 
 TEST_APPROACH_CONTEXTS = {
     9: {
@@ -334,6 +348,7 @@ def _line_items(value: Any) -> list[str]:
 
 def render_pdf(payload: dict[str, Any]) -> bytes:
     sections = _normalize_payload(payload)
+    pdf_font_name = _pdf_content_font_name()
     buffer = BytesIO()
     doc = SimpleDocTemplate(
         buffer,
@@ -349,24 +364,30 @@ def render_pdf(payload: dict[str, Any]) -> bytes:
     title_style = ParagraphStyle(
         "DocumentTitle",
         parent=styles["Title"],
+        fontName=pdf_font_name,
         fontSize=20,
         leading=24,
         spaceAfter=18,
+        textColor=black,
     )
     section_style = ParagraphStyle(
         "SectionTitle",
         parent=styles["Heading2"],
+        fontName=pdf_font_name,
         fontSize=13,
         leading=16,
         spaceBefore=12,
         spaceAfter=8,
+        textColor=black,
     )
     body_style = ParagraphStyle(
         "Body",
         parent=styles["BodyText"],
+        fontName=pdf_font_name,
         fontSize=9.5,
         leading=13,
         spaceAfter=5,
+        textColor=black,
     )
 
     story = [PdfParagraph("AI Generated Software Test Plan", title_style)]
@@ -634,11 +655,35 @@ def _replace_angle_placeholders(text: str, resolve: Any) -> str:
 def _set_paragraph_text(paragraph: DocxParagraph, text: str) -> None:
     if paragraph.runs:
         paragraph.runs[0].text = text
+        _apply_plain_content_run_format(paragraph.runs[0])
         for run in paragraph.runs[1:]:
             run.text = ""
+            _apply_plain_content_run_format(run)
         return
 
-    paragraph.add_run(text)
+    _apply_plain_content_run_format(paragraph.add_run(text))
+
+
+def _apply_plain_content_run_format(run: Any) -> None:
+    run.font.name = CONTENT_FONT_NAME
+    run.font.color.rgb = CONTENT_FONT_COLOR
+    run.font.italic = False
+    run.font.underline = False
+    run.font.bold = False
+    run._element.get_or_add_rPr().get_or_add_rFonts().set(qn("w:eastAsia"), CONTENT_FONT_NAME)
+
+
+def _pdf_content_font_name() -> str:
+    if PDF_CONTENT_FONT_NAME in pdfmetrics.getRegisteredFontNames():
+        return PDF_CONTENT_FONT_NAME
+
+    for font_path in PDF_FONT_CANDIDATES:
+        if not font_path.exists():
+            continue
+        pdfmetrics.registerFont(TTFont(PDF_CONTENT_FONT_NAME, str(font_path)))
+        return PDF_CONTENT_FONT_NAME
+
+    return "Helvetica"
 
 
 def _placeholder_replacement(

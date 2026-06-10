@@ -1,9 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 :root {
-  color: #18212f;
+  color: #5590ee;
   background: #ffffff;
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -199,13 +195,13 @@ button:disabled {
 
 .file-row strong {
   overflow-wrap: anywhere;
-  color: #18212f;
+  color: #212d40;
   font-size: 0.96rem;
 }
 
 .file-row span {
   margin-top: 3px;
-  color: #66758a;
+  color: #3a5e91;
   font-size: 0.84rem;
 }
 
@@ -213,8 +209,8 @@ button:disabled {
   margin: 14px 0 0;
   border-left: 4px solid #d64545;
   padding: 9px 12px;
-  color: #923333;
-  background: #cedce2;
+  color: #9c3939;
+  background: #80d5f9;
 }
 
 .action-row {
@@ -429,6 +425,21 @@ button:disabled {
 .testcase-detail ol {
   margin: 6px 0 0;
   padding-left: 22px;
+}
+
+.document-preview,
+.document-preview h3,
+.document-preview h4,
+.document-preview p,
+.document-preview li,
+.document-preview span,
+.document-preview strong,
+.document-preview em,
+.document-preview b {
+  color: #000000;
+  font-family: Arial, sans-serif;
+  font-style: normal;
+  font-weight: 400;
 }
 
 @media (max-width: 900px) {

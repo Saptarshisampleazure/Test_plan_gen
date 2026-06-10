@@ -326,7 +326,7 @@ function App() {
 
         <header className="page-header">
           <div>
-            <h1>VeriMind AI</h1>
+            <h1>GenTest AI</h1>
           </div>
           <span className="status-pill">{status}</span>
         </header>
